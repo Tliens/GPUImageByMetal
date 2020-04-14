@@ -2,14 +2,21 @@ import Foundation
 import Metal
 /// 这个类理解起来可能会有点绕，名字的意思是着色器统一配置
 public class ShaderUniformSettings {
+    /// 统一值数组
     private var uniformValues:[Float] = []
+    /// 统一值偏移量
     private var uniformValueOffsets:[Int] = []
+    /// 使用使用alpha通道
     public var colorUniformsUseAlpha:Bool = false
+    /// 配置着色器统一值时的串行队列
     let shaderUniformSettingsQueue = DispatchQueue(
         label: "com.sunsetlakesoftware.GPUImage.shaderUniformSettings",
         attributes: [])
+    /// 统一值的查找表
     let uniformLookupTable:[String:Int]
-
+    
+    /// 初始化 配置信息
+    /// - Parameter uniformLookupTable: 一个字典
     public init(uniformLookupTable:[String:(Int, MTLDataType)]) {
         var convertedLookupTable:[String:Int] = [:]
         
@@ -27,7 +34,7 @@ public class ShaderUniformSettings {
             self.appendBufferSpace(for:dataType)
         }
     }
-    
+    /// 是否使用纵横比，意思是锁定比例，然后进行填充
     public var usesAspectRatio:Bool { get { return self.uniformLookupTable["aspectRatio"] != nil } }
     
     private func internalIndex(for index:Int) -> Int {
