@@ -1,6 +1,6 @@
 import Foundation
 import Metal
-
+/// 这个类理解起来可能会有点绕，名字的意思是着色器统一配置
 public class ShaderUniformSettings {
     private var uniformValues:[Float] = []
     private var uniformValueOffsets:[Int] = []

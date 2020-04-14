@@ -1,3 +1,5 @@
+/// rgba颜色分量
+/// 因为没有UIKit 框架，否则写成UIColor extension 是极好的
 public struct Color {
     public let redComponent:Float
     public let greenComponent:Float

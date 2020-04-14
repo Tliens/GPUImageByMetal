@@ -809,17 +809,17 @@
 		BCE0BE9420D6E37D0006E120 /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				BCE0BE9B20D6E3C80006E120 /* Pipeline.swift */,
-				BCE0BE9D20D6E3C80006E120 /* ImageOrientation.swift */,
 				BCE0BE9820D6E3C80006E120 /* Color.swift */,
-				BCE0BE9A20D6E3C80006E120 /* Position.swift */,
-				BCE0BE9920D6E3C80006E120 /* Size.swift */,
+				BCE0BE9D20D6E3C80006E120 /* ImageOrientation.swift */,
 				BCE0BE9C20D6E3C80006E120 /* Matrix.swift */,
-				79E30E6220F10B6C005FA13C /* MetalRenderingDevice.swift */,
-				79E30E6E20F11989005FA13C /* Timestamp.swift */,
-				79E30E6B20F118CD005FA13C /* Texture.swift */,
 				795B05D720F270FF00D1E759 /* MetalRendering.swift */,
+				79E30E6220F10B6C005FA13C /* MetalRenderingDevice.swift */,
+				BCE0BE9B20D6E3C80006E120 /* Pipeline.swift */,
+				BCE0BE9A20D6E3C80006E120 /* Position.swift */,
 				BC7BA27320F2BD1E006B5F4B /* ShaderUniformSettings.swift */,
+				BCE0BE9920D6E3C80006E120 /* Size.swift */,
+				79E30E6B20F118CD005FA13C /* Texture.swift */,
+				79E30E6E20F11989005FA13C /* Timestamp.swift */,
 			);
 			name = Base;
 			sourceTree = "<group>";

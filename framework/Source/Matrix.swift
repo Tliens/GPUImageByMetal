@@ -1,5 +1,6 @@
 import QuartzCore
 
+/// 4x4矩阵
 public struct Matrix4x4 {
     public let m11:Float, m12:Float, m13:Float, m14:Float
     public let m21:Float, m22:Float, m23:Float, m24:Float
@@ -36,6 +37,7 @@ public struct Matrix4x4 {
                                                            0.0, 0.0, 0.0, 1.0])
 }
 
+/// 3x3矩阵
 public struct Matrix3x3 {
     public let m11:Float, m12:Float, m13:Float
     public let m21:Float, m22:Float, m23:Float
@@ -66,6 +68,16 @@ public struct Matrix3x3 {
                                                              0.0, 0.0, 0.0])
 }
 
+/// 生成正射矩阵，实际上就是位移加缩放，有待证明，目前gpuimage3中尚未使用
+/// - Parameters:
+///   - left: 左
+///   - right: 右
+///   - bottom: 下
+///   - top: 上
+///   - near: 近点
+///   - far: 远点
+///   - anchorTopLeft: 是否左上角为锚点
+/// - Returns: 4x4的矩阵
 func orthographicMatrix(_ left:Float, right:Float, bottom:Float, top:Float, near:Float, far:Float, anchorTopLeft:Bool = false) -> Matrix4x4 {
     let r_l = right - left
     let t_b = top - bottom
@@ -92,6 +104,9 @@ func orthographicMatrix(_ left:Float, right:Float, bottom:Float, top:Float, near
 
 
 public extension Matrix4x4 {
+    
+    /// 通过 CATransform3D 得到4x4矩阵
+    /// - Parameter transform3D: 一个CoreAnimation框架下的矩阵
     init (_ transform3D:CATransform3D) {
         self.m11 = Float(transform3D.m11)
         self.m12 = Float(transform3D.m12)

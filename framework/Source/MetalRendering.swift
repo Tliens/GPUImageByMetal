@@ -2,9 +2,15 @@ import Foundation
 import Metal
 
 // OpenGL uses a bottom-left origin while Metal uses a top-left origin.
+/// 标准顶点，Metal的原点在左上角
 public let standardImageVertices:[Float] = [-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]
-
+/// 渲染指令buffer
 extension MTLCommandBuffer {
+    
+    /// 清屏操作
+    /// - Parameters:
+    ///   - color: 清屏颜色
+    ///   - outputTexture: 载体纹理
     func clear(with color: Color, outputTexture: Texture) {
         let renderPass = MTLRenderPassDescriptor()
         renderPass.colorAttachments[0].texture = outputTexture.texture
@@ -24,6 +30,15 @@ extension MTLCommandBuffer {
         renderEncoder.endEncoding()
     }
     
+    /// 提交渲染指令
+    /// - Parameters:
+    ///   - pipelineState: 渲染管线状态
+    ///   - uniformSettings: 控制核心
+    ///   - inputTextures: 输入的纹理们
+    ///   - useNormalizedTextureCoordinates: 使用归一化纹理坐标
+    ///   - imageVertices: 图片坐标点
+    ///   - outputTexture: 输出纹理
+    ///   - outputOrientation: 输出方向
     func renderQuad(pipelineState:MTLRenderPipelineState, uniformSettings:ShaderUniformSettings? = nil, inputTextures:[UInt:Texture], useNormalizedTextureCoordinates:Bool = true, imageVertices:[Float] = standardImageVertices, outputTexture:Texture, outputOrientation:ImageOrientation = .portrait) {
         let vertexBuffer = sharedMetalRenderingDevice.device.makeBuffer(bytes: imageVertices,
                                                                         length: imageVertices.count * MemoryLayout<Float>.size,
@@ -62,6 +77,13 @@ extension MTLCommandBuffer {
     }
 }
 
+/// 生成渲染管线状态
+/// - Parameters:
+///   - device: 支持Metal的设备
+///   - vertexFunctionName: 顶点着色器名称
+///   - fragmentFunctionName: 片段作色器名称
+///   - operationName: 操作名称
+/// - Returns: 渲染管线 记录参数名称的字典
 func generateRenderPipelineState(device:MetalRenderingDevice, vertexFunctionName:String, fragmentFunctionName:String, operationName:String) -> (MTLRenderPipelineState, [String:(Int, MTLDataType)]) {
     guard let vertexFunction = device.shaderLibrary.makeFunction(name: vertexFunctionName) else {
         fatalError("\(operationName): could not compile vertex function \(vertexFunctionName)")
