@@ -4,17 +4,27 @@ import UIKit
 import Cocoa
 #endif
 import MetalKit
-
+/// 图片输入，渲染链中的输入环节，相对于Camera要简单，只需要把image转为纹理就好
 public class PictureInput: ImageSource {
+    /// 目标容器
     public let targets = TargetContainer()
+    /// 内部纹理，贮存使用，不用每次都搞个新的
     var internalTexture:Texture?
+    /// 是否已经处理过图片，一个标记
     var hasProcessedImage:Bool = false
+    /// 内部图片
     var internalImage:CGImage?
-
+    
+    /// 初始化
+    /// - Parameters:
+    ///   - image: 图像 CGImage
+    ///   - smoothlyScaleOutput: 顺滑缩放
+    ///   - orientation: 图片方向
+    /// 很明显，作者还没写完
     public init(image:CGImage, smoothlyScaleOutput:Bool = false, orientation:ImageOrientation = .portrait) {
         internalImage = image
     }
-    
+    /// 以下均为初始化
     #if canImport(UIKit)
     public convenience init(image:UIImage, smoothlyScaleOutput:Bool = false, orientation:ImageOrientation = .portrait) {
         self.init(image: image.cgImage!, smoothlyScaleOutput: smoothlyScaleOutput, orientation: orientation)
@@ -36,6 +46,8 @@ public class PictureInput: ImageSource {
     }
     #endif
     
+    /// 处理图片
+    /// - Parameter synchronously: 区分同步还是异步
     public func processImage(synchronously:Bool = false) {
         if let texture = internalTexture {
             if synchronously {
@@ -73,7 +85,7 @@ public class PictureInput: ImageSource {
             }
         }
     }
-    
+    /// 转发，这个什么时候会用到？似乎没用哈，又不是中间层
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         if hasProcessedImage {
             target.newTextureAvailable(self.internalTexture!, fromSourceIndex:atIndex)
