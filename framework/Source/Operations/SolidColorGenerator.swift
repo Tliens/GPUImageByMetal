@@ -1,3 +1,4 @@
+/// 纯色生成器
 public class SolidColorGenerator: ImageGenerator {
 
     public func renderColor(_ color:Color) {
