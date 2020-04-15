@@ -1,27 +1,45 @@
 import AVFoundation
 import Metal
-
+/// 视频输入，视频源，处理视频使用，是一个大类
 public class MovieInput: ImageSource {
+    /// 目标容器
     public let targets = TargetContainer()
+    /// 是否运行基准
     public var runBenchmark = false
-    
+    /// 视频纹理缓存
     var videoTextureCache: CVMetalTextureCache?
+    /// yuv转换渲染管线
     let yuvConversionRenderPipelineState:MTLRenderPipelineState
+    /// yuv渲染信息记录
     var yuvLookupTable:[String:(Int, MTLDataType)] = [:]
-
+    /// 音视频资源
     let asset:AVAsset
+    /// 音视频资源读取操作员
     let assetReader:AVAssetReader
+    /// 是否用真是速度播放，（—导出视频时为false，播放时为true）
     let playAtActualSpeed:Bool
+    /// 循环播放吗？
     let loop:Bool
+    /// 视频编码是否完成
     var videoEncodingIsFinished = false
+    /// 之前的帧时长
     var previousFrameTime = CMTime.zero
+    /// 之前的真实帧时长
     var previousActualFrameTime = CFAbsoluteTimeGetCurrent()
-
+    /// 采集的帧数
     var numberOfFramesCaptured = 0
+    /// 采集的帧数所需所有时长
     var totalFrameTimeDuringCapture:Double = 0.0
 
     // TODO: Add movie reader synchronization
     // TODO: Someone will have to add back in the AVPlayerItem logic, because I don't know how that works
+    
+    /// 初始化操作
+    /// - Parameters:
+    ///   - asset: 音视频资源
+    ///   - playAtActualSpeed: 真实速度播放？
+    ///   - loop: 循环吗？
+    /// - Throws: 错误信息
     public init(asset:AVAsset, playAtActualSpeed:Bool = false, loop:Bool = false) throws {
         self.asset = asset
         self.playAtActualSpeed = playAtActualSpeed
@@ -40,7 +58,13 @@ public class MovieInput: ImageSource {
         assetReader.add(readerVideoTrackOutput)
         // TODO: Audio here
     }
-
+    
+    /// 便捷初始化操作
+    /// - Parameters:
+    ///   - url: 资源url路径
+    ///   - playAtActualSpeed: 真实速度播放
+    ///   - loop: 是否循环
+    /// - Throws: 初始化错误信息
     public convenience init(url:URL, playAtActualSpeed:Bool = false, loop:Bool = false) throws {
         let inputOptions = [AVURLAssetPreferPreciseDurationAndTimingKey:NSNumber(value:true)]
         let inputAsset = AVURLAsset(url:url, options:inputOptions)
@@ -49,7 +73,8 @@ public class MovieInput: ImageSource {
 
     // MARK: -
     // MARK: Playback control
-
+    /// 开始处理，循环取帧，用了do while循环
+    /// 作者还没有完善loop情况
     public func start() {
         asset.loadValuesAsynchronously(forKeys:["tracks"], completionHandler:{
             DispatchQueue.global().async(execute: {
@@ -84,12 +109,12 @@ public class MovieInput: ImageSource {
             })
         })
     }
-    
+    /// 取消
     public func cancel() {
         assetReader.cancelReading()
         self.endProcessing()
     }
-    
+    /// 结束 作者还没写，我的天，GPUImage3 我感觉遥遥无期了
     func endProcessing() {
         
     }
@@ -97,6 +122,8 @@ public class MovieInput: ImageSource {
     // MARK: -
     // MARK: Internal processing functions
     
+    /// 读帧，要是按照实际速度，就休眠
+    /// - Parameter videoTrackOutput: 视频轨道输出
     func readNextVideoFrame(from videoTrackOutput:AVAssetReaderOutput) {
         if ((assetReader.status == .reading) && !videoEncodingIsFinished) {
             if let sampleBuffer = videoTrackOutput.copyNextSampleBuffer() {
@@ -138,6 +165,8 @@ public class MovieInput: ImageSource {
 
     }
     
+    /// 处理 CMSampleBuffer
+    /// - Parameter frame: CMSampleBuffer
     func process(movieFrame frame:CMSampleBuffer) {
         let currentSampleTime = CMSampleBufferGetOutputPresentationTimeStamp(frame)
         let movieFrame = CMSampleBufferGetImageBuffer(frame)!
@@ -146,6 +175,10 @@ public class MovieInput: ImageSource {
         self.process(movieFrame:movieFrame, withSampleTime:currentSampleTime)
     }
     
+    /// 处理 CVPixelBuffer，然后给目标容器，让其更新纹理
+    /// - Parameters:
+    ///   - movieFrame: 视频帧
+    ///   - withSampleTime: 时间戳
     func process(movieFrame:CVPixelBuffer, withSampleTime:CMTime) {
         let bufferHeight = CVPixelBufferGetHeight(movieFrame)
         let bufferWidth = CVPixelBufferGetWidth(movieFrame)
@@ -206,7 +239,7 @@ public class MovieInput: ImageSource {
         // Not needed for movie inputs
     }
 }
-
+/// extension 别瞎放，放到一起吧，不然以后懵逼
 public extension Timestamp {
     init(_ time:CMTime) {
         self.value = time.value
