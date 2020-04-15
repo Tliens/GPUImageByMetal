@@ -44,7 +44,7 @@ public struct Timestamp: Comparable {
     public static let zero = Timestamp(value: 0, timescale: 0, flags: .valid, epoch: 0)
 
 }
-/// 这为什么放到外边？不是笔误吗？
+
 public func ==(x:Timestamp, y:Timestamp) -> Bool {
     // TODO: Fix this
 //    if (x.flags.contains(TimestampFlags.PositiveInfinity) && y.flags.contains(TimestampFlags.PositiveInfinity)) {

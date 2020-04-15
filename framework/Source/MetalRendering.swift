@@ -31,15 +31,22 @@ extension MTLCommandBuffer {
     }
     
     /// 提交渲染指令
+    /// 这么长的参数，作者就不能整理下吗？
     /// - Parameters:
     ///   - pipelineState: 渲染管线状态
     ///   - uniformSettings: 控制核心
     ///   - inputTextures: 输入的纹理们
     ///   - useNormalizedTextureCoordinates: 使用归一化纹理坐标
-    ///   - imageVertices: 图片坐标点
+    ///   - imageVertices: 图片坐标点（实际上是显示区域）
     ///   - outputTexture: 输出纹理
     ///   - outputOrientation: 输出方向
-    func renderQuad(pipelineState:MTLRenderPipelineState, uniformSettings:ShaderUniformSettings? = nil, inputTextures:[UInt:Texture], useNormalizedTextureCoordinates:Bool = true, imageVertices:[Float] = standardImageVertices, outputTexture:Texture, outputOrientation:ImageOrientation = .portrait) {
+    func renderQuad(pipelineState:MTLRenderPipelineState,
+                    uniformSettings:ShaderUniformSettings? = nil,
+                    inputTextures:[UInt:Texture],
+                    useNormalizedTextureCoordinates:Bool = true,
+                    imageVertices:[Float] = standardImageVertices,
+                    outputTexture:Texture,
+                    outputOrientation:ImageOrientation = .portrait) {
         let vertexBuffer = sharedMetalRenderingDevice.device.makeBuffer(bytes: imageVertices,
                                                                         length: imageVertices.count * MemoryLayout<Float>.size,
                                                                         options: [])!
@@ -77,7 +84,7 @@ extension MTLCommandBuffer {
     }
 }
 
-/// 生成渲染管线状态
+/// 生成渲染管线状态，读取着色器中的uniform、datetype
 /// - Parameters:
 ///   - device: 支持Metal的设备
 ///   - vertexFunctionName: 顶点着色器名称

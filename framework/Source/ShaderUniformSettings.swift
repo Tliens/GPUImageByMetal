@@ -1,10 +1,20 @@
 import Foundation
 import Metal
-/// 这个类理解起来可能会有点绕，名字的意思是着色器统一配置
+/// 名字的意思是着色器统一配置，里边存的都是着色器相关的东西，具体在使用shader时，在深入理解比较好，自己打印下内容
 public class ShaderUniformSettings {
     /// 统一值数组
     private var uniformValues:[Float] = []
     /// 统一值偏移量
+    /*
+     func renderQuad(pipelineState:MTLRenderPipelineState,
+     uniformSettings:ShaderUniformSettings? = nil,
+     inputTextures:[UInt:Texture],
+     useNormalizedTextureCoordinates:Bool = true,
+     imageVertices:[Float] = standardImageVertices,
+     outputTexture:Texture,
+     outputOrientation:ImageOrientation = .portrait)
+     */
+    /// 我们看到偏移量基本都是 0
     private var uniformValueOffsets:[Int] = []
     /// 使用使用alpha通道
     public var colorUniformsUseAlpha:Bool = false
@@ -110,7 +120,7 @@ public class ShaderUniformSettings {
             }
         }
     }
-    /// 咦，我似乎明白了，这里写了这么多提出的操作，而且是针对不同类型的
+    /// 咦，我似乎明白了，这里写了这么多subscript的操作，而且是针对不同类型的
     /// 意味着 uniformValues 存的就是这些东西
     public subscript(key:String) -> Size {
         get {
