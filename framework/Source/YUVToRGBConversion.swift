@@ -1,5 +1,7 @@
 import Metal
 
+/// 不同格式的YUV转RGB的矩阵
+
 // BT.601, which is the standard for SDTV.
 public let colorConversionMatrix601Default = Matrix3x3(rowMajorValues:[
     1.164,  1.164, 1.164,
@@ -21,6 +23,14 @@ public let colorConversionMatrix709Default = Matrix3x3(rowMajorValues:[
     1.793, -0.533,   0.0,
 ])
 
+/// YUV转RGB，Metal中处理的是rbg
+///  - Parameter pipelineState 渲染管线状态
+/// - Parameter lookupTable 渲染shader的信息
+/// - Parameter luminanceTexture 亮度纹理
+/// - Parameter chrominanceTexture 彩色纹理
+/// - Parameter secondChrominanceTexture 第二个色度纹理
+/// - Parameter resultTexture结果纹理
+/// - Parameter colorConversionMatrix颜色转换矩阵
 public func convertYUVToRGB(pipelineState:MTLRenderPipelineState, lookupTable:[String:(Int, MTLDataType)], luminanceTexture:Texture, chrominanceTexture:Texture, secondChrominanceTexture:Texture? = nil, resultTexture:Texture, colorConversionMatrix:Matrix3x3) {
     let uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable)
     uniformSettings["colorConversionMatrix"] = colorConversionMatrix
