@@ -16,7 +16,7 @@ public class ShaderUniformSettings {
     let uniformLookupTable:[String:Int]
     
     /// 初始化 配置信息
-    /// - Parameter uniformLookupTable: 一个字典
+    /// - Parameter uniformLookupTable: 一个字典，字典里包括名称+元组，元组中第一个元素是Int类型，第二个是MTLDataType类型
     public init(uniformLookupTable:[String:(Int, MTLDataType)]) {
         var convertedLookupTable:[String:Int] = [:]
         
@@ -37,6 +37,9 @@ public class ShaderUniformSettings {
     /// 是否使用纵横比，意思是锁定比例，然后进行填充
     public var usesAspectRatio:Bool { get { return self.uniformLookupTable["aspectRatio"] != nil } }
     
+    /// 根据索引值，获取偏移量对应的内部索引
+    /// - Parameter index: 索引值
+    /// - Returns: 索引值
     private func internalIndex(for index:Int) -> Int {
         if (index == 0) {
             return 0
@@ -47,7 +50,8 @@ public class ShaderUniformSettings {
     
     // MARK: -
     // MARK: Subscript access
-    
+    /// 下角标访问，swift特性，可以定义在类（Class）、结构体（structure）和枚举（enumeration）
+    /// 此处的根据key值进行读写uniformValues
     public subscript(key:String) -> Float {
         get {
             guard let index = uniformLookupTable[key] else {fatalError("Tried to access value of missing uniform: \(key), make sure this is present and used in your shader.")}
@@ -60,7 +64,8 @@ public class ShaderUniformSettings {
             }
         }
     }
-
+    /// 此处的根据key值进行读写Color
+    /// newValue类型与返回值相同
     public subscript(key:String) -> Color {
         get {
             // TODO: Fix this
@@ -86,7 +91,8 @@ public class ShaderUniformSettings {
             }
         }
     }
-
+    /// 此处的根据key值进行读写Position，三维
+    /// newValue类型与返回值相同
     public subscript(key:String) -> Position {
         get {
             // TODO: Fix this
@@ -104,7 +110,8 @@ public class ShaderUniformSettings {
             }
         }
     }
-
+    /// 咦，我似乎明白了，这里写了这么多提出的操作，而且是针对不同类型的
+    /// 意味着 uniformValues 存的就是这些东西
     public subscript(key:String) -> Size {
         get {
             // TODO: Fix this
@@ -161,7 +168,9 @@ public class ShaderUniformSettings {
     
     // MARK: -
     // MARK: Uniform buffer memory management
+    /// buffer内存管理
     
+    /// 增加
     func appendBufferSpace(for dataType:MTLDataType) {
         let uniformSize:Int
         switch dataType {
@@ -179,7 +188,7 @@ public class ShaderUniformSettings {
         uniformValues.append(contentsOf:blankValues)
         uniformValueOffsets.append(lastOffset + uniformSize)
     }
-    
+    /// 对齐
     func alignPackingForOffset(uniformSize:Int, lastOffset:Int) -> Int {
         let floatAlignment = (lastOffset + uniformSize) % 4
         let previousFloatAlignment = lastOffset % 4
@@ -192,7 +201,7 @@ public class ShaderUniformSettings {
             return lastOffset
         }
     }
-
+    /// 恢复设置
     public func restoreShaderSettings(renderEncoder:MTLRenderCommandEncoder) {
         shaderUniformSettingsQueue.sync {
             guard (uniformValues.count > 0) else { return }
@@ -204,7 +213,7 @@ public class ShaderUniformSettings {
         }
     }
 }
-
+/// Uniform 转换协议
 public protocol UniformConvertible {
     func toFloatArray() -> [Float]
 }

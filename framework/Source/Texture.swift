@@ -3,7 +3,7 @@ import Metal
 #if os(iOS)
 import UIKit
 #endif
-
+/// 纹理类型，静态的，还是动态的（照片是静态，视频帧是动态的），还贴心的加了时间戳
 public enum TextureTimingStyle {
     case stillImage
     case videoFrame(timestamp:Timestamp)
@@ -24,19 +24,35 @@ public enum TextureTimingStyle {
         }
     }
 }
-
+/// 主角 纹理
 public class Texture {
+    /// 类型
     public var timingStyle: TextureTimingStyle
+    /// 方向
     public var orientation: ImageOrientation
-    
+    /// 原始纹理资源
     public let texture: MTLTexture
     
+    /// 初始化自定义结构体 Texture
+    /// - Parameters:
+    ///   - orientation: 方向
+    ///   - texture: 纹理
+    ///   - timingStyle: 类型
     public init(orientation: ImageOrientation, texture: MTLTexture, timingStyle: TextureTimingStyle  = .stillImage) {
         self.orientation = orientation
         self.texture = texture
         self.timingStyle = timingStyle
     }
     
+    /// 初始化纹理
+    /// - Parameters:
+    ///   - device: 设备
+    ///   - orientation: 方向
+    ///   - pixelFormat: 像素格式
+    ///   - width: 宽
+    ///   - height: 高
+    ///   - mipmapped: 纹理映射，是一门技术，通常在3D中使用，可以提高效率，图片处理用false，具体的可以看看OpenGL ES教程，我记得有介绍，和远近距离有关
+    ///   - timingStyle: 类型
     public init(device:MTLDevice, orientation: ImageOrientation, pixelFormat: MTLPixelFormat = .bgra8Unorm, width: Int, height: Int, mipmapped:Bool = false, timingStyle: TextureTimingStyle  = .stillImage) {
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
                                                                          width: width,
@@ -55,6 +71,8 @@ public class Texture {
 }
 
 extension Texture {
+    /// 根据 方向，获取纹理坐标点，是一个数组
+    /// - Parameter normalized : 是否归一化
     func textureCoordinates(for outputOrientation:ImageOrientation, normalized:Bool) -> [Float] {
         let inputRotation = self.orientation.rotationNeeded(for:outputOrientation)
 
@@ -79,7 +97,7 @@ extension Texture {
         case .rotateClockwiseAndFlipHorizontally: return [xLimit, yLimit, xLimit, 0.0, 0.0, yLimit, 0.0, 0.0]
         }
     }
-    
+    /// 获取缩放系数
     func aspectRatio(for rotation:Rotation) -> Float {
         // TODO: Figure out why my logic was failing on this
         return Float(self.texture.height) / Float(self.texture.width)
@@ -111,6 +129,7 @@ extension Texture {
 }
 
 extension Texture {
+    /// texture 转cgimage 这个应该常用，应该有个异步操作，放到一个子线程中，拷贝一份纹理，进行加锁
     func cgImage() -> CGImage {
         // Flip and swizzle image
         guard let commandBuffer = sharedMetalRenderingDevice.commandQueue.makeCommandBuffer() else { fatalError("Could not create command buffer on image rendering.")}
@@ -129,7 +148,7 @@ extension Texture {
         return CGImage(width:texture.width, height:texture.height, bitsPerComponent:8, bitsPerPixel:32, bytesPerRow:4 * texture.width, space:defaultRGBColorSpace, bitmapInfo:CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue), provider:dataProvider, decode:nil, shouldInterpolate:false, intent:.defaultIntent)!
     }
 }
-
+/// 释放非ARC队形资源，全局函数就放到这里？有点草率
 func dataProviderReleaseCallback(_ context:UnsafeMutableRawPointer?, data:UnsafeRawPointer, size:Int) {
     data.deallocate()
 }
