@@ -31,6 +31,16 @@ public let colorConversionMatrix709Default = Matrix3x3(rowMajorValues:[
 /// - Parameter secondChrominanceTexture 第二个色度纹理
 /// - Parameter resultTexture结果纹理
 /// - Parameter colorConversionMatrix颜色转换矩阵
+
+/*
+ po lookupTable
+ ▿ 1 element
+   ▿ 0 : 2 elements
+     - key : "colorConversionMatrix"
+     ▿ value : 2 elements
+       - .0 : 0
+       - .1 : __C.MTLDataType
+ */
 public func convertYUVToRGB(pipelineState:MTLRenderPipelineState, lookupTable:[String:(Int, MTLDataType)], luminanceTexture:Texture, chrominanceTexture:Texture, secondChrominanceTexture:Texture? = nil, resultTexture:Texture, colorConversionMatrix:Matrix3x3) {
     let uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable)
     uniformSettings["colorConversionMatrix"] = colorConversionMatrix

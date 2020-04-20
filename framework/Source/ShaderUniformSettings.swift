@@ -1,6 +1,16 @@
 import Foundation
 import Metal
 /// 名字的意思是着色器统一配置，里边存的都是着色器相关的东西，具体在使用shader时，在深入理解比较好，自己打印下内容
+/*
+ 什么是uniform？
+ - yuvConversionVideoRangeFragment 中的 YUVConversionUniform
+ - thresholdFragment 中的 ThresholdUniform
+ - brightnessFragment 中的 BrightnessUniform
+ - exposureFragment 中的 ExposureUniform
+ - contrastFragment 中的 ContrastUniform
+ 综上，我们可以推断出，Uniform是用于可控制的，即值可以改变的且存在于Fragment中的变量
+ ShaderUniformSettings 就是为了记录以及改变这些变量。
+ */
 public class ShaderUniformSettings {
     /// 统一值数组
     private var uniformValues:[Float] = []
@@ -14,7 +24,7 @@ public class ShaderUniformSettings {
      outputTexture:Texture,
      outputOrientation:ImageOrientation = .portrait)
      */
-    /// 我们看到偏移量基本都是 0
+    /// 看到偏移量
     private var uniformValueOffsets:[Int] = []
     /// 使用使用alpha通道
     public var colorUniformsUseAlpha:Bool = false
