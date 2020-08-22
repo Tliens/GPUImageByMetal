@@ -11,17 +11,25 @@ public enum PictureFileFormat {
     case png
     case jpeg
 }
-
+//图片输出
 public class PictureOutput: ImageConsumer {
+    /// 编码图片异步回调 data
     public var encodedImageAvailableCallback:((Data) -> ())?
+    /// 图片编码的类型
     public var encodedImageFormat:PictureFileFormat = .png
+    /// 编码图片异步回调 uiimage
     public var imageAvailableCallback:((PlatformImageType) -> ())?
+    /// 是否使用下一帧
     public var onlyCaptureNextFrame:Bool = true
+    /// ???
     public var keepImageAroundForSynchronousCapture:Bool = false
+    /// 缓存的纹理
     var storedTexture:Texture?
-    
+    /// 输入源或者中间层容器
     public let sources = SourceContainer()
+    /// 最大输入数量
     public let maximumInputs:UInt = 1
+    /// 输出路径
     var url:URL!
     
     public init() {
@@ -29,7 +37,7 @@ public class PictureOutput: ImageConsumer {
     
     deinit {
     }
-    
+    /// 保存到url中，format表示图片格式 目前只有png、jpg
     public func saveNextFrameToURL(_ url:URL, format:PictureFileFormat) {
         onlyCaptureNextFrame = true
         encodedImageFormat = format
@@ -43,7 +51,7 @@ public class PictureOutput: ImageConsumer {
             }
         }
     }
-    
+    /// 得到新的纹理
     public func newTextureAvailable(_ texture:Texture, fromSourceIndex:UInt) {
         if keepImageAroundForSynchronousCapture {
 //            storedTexture?.unlock()
@@ -74,7 +82,7 @@ public class PictureOutput: ImageConsumer {
 #if canImport(UIKit)
             let image = UIImage(cgImage:cgImageFromBytes, scale:1.0, orientation:.up)
             switch encodedImageFormat {
-            case .png: imageData = image.pngData()! // TODO: Better error handling here
+                case .png: imageData = image.pngData()! // TODO: Better error handling here
                 case .jpeg: imageData = image.jpegData(compressionQuality: 0.8)! // TODO: Be able to set image quality
             }
 #else
@@ -96,11 +104,11 @@ public class PictureOutput: ImageConsumer {
 //        var outputImage:UIImage!
 //        sharedImageProcessingContext.runOperationSynchronously{
 //            guard let currentFramebuffer = storedFramebuffer else { fatalError("Synchronous access requires keepImageAroundForSynchronousCapture to be set to true") }
-//            
+//
 //            let cgImageFromBytes = cgImageFromFramebuffer(currentFramebuffer)
 //            outputImage = UIImage(cgImage:cgImageFromBytes, scale:1.0, orientation:.up)
 //        }
-//        
+//
 //        return outputImage
 //    }
 }
@@ -112,7 +120,7 @@ public extension ImageSource {
         self --> pictureOutput
     }
 }
-
+/// uiimage --> operation -->  PictureOutput
 public extension PlatformImageType {
     func filterWithOperation<T:ImageProcessingOperation>(_ operation:T) -> PlatformImageType {
         return filterWithPipeline{input, output in

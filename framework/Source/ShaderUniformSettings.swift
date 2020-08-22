@@ -24,7 +24,7 @@ public class ShaderUniformSettings {
      outputTexture:Texture,
      outputOrientation:ImageOrientation = .portrait)
      */
-    /// 看到偏移量
+    /// uniform偏移量 内存对齐
     private var uniformValueOffsets:[Int] = []
     /// 使用使用alpha通道
     public var colorUniformsUseAlpha:Bool = false
@@ -32,11 +32,11 @@ public class ShaderUniformSettings {
     let shaderUniformSettingsQueue = DispatchQueue(
         label: "com.sunsetlakesoftware.GPUImage.shaderUniformSettings",
         attributes: [])
-    /// 统一值的查找表
+    /// 统一值的查找表 从着色器中获取，具体查看generate pipline部分 String为uniform变量名，Int为uniform变量对应的索引值
     let uniformLookupTable:[String:Int]
     
     /// 初始化 配置信息
-    /// - Parameter uniformLookupTable: 一个字典，字典里包括名称+元组，元组中第一个元素是Int类型，第二个是MTLDataType类型
+    /// - Parameter uniformLookupTable: 一个字典数组，字典里包括名称+元组，元组中第一个元素是Int类型，第二个是MTLDataType类型
     public init(uniformLookupTable:[String:(Int, MTLDataType)]) {
         var convertedLookupTable:[String:Int] = [:]
         
@@ -190,7 +190,7 @@ public class ShaderUniformSettings {
     // MARK: Uniform buffer memory management
     /// buffer内存管理
     
-    /// 增加
+    /// 增加 ？？？
     func appendBufferSpace(for dataType:MTLDataType) {
         let uniformSize:Int
         switch dataType {
@@ -204,11 +204,14 @@ public class ShaderUniformSettings {
         }
         let blankValues = [Float](repeating:0.0, count:uniformSize)
 
-        let lastOffset = alignPackingForOffset(uniformSize:uniformSize, lastOffset:uniformValueOffsets.last ?? 0)
+        let lastOffset = alignPackingForOffset(uniformSize:uniformSize,
+                                               lastOffset:uniformValueOffsets.last ?? 0)
+        // uniformValues 是所有uniform经过内存对齐后的数据量
         uniformValues.append(contentsOf:blankValues)
+        /// uniformValueOffsets 是某个uniform的数据的偏移量，通过偏移量和uniform的数据大小，就可以从uniformValues中取出真正的数据
         uniformValueOffsets.append(lastOffset + uniformSize)
     }
-    /// 对齐
+    /// 内存对齐处理
     func alignPackingForOffset(uniformSize:Int, lastOffset:Int) -> Int {
         let floatAlignment = (lastOffset + uniformSize) % 4
         let previousFloatAlignment = lastOffset % 4
