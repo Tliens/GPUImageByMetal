@@ -10,7 +10,7 @@ public class ImageGenerator: ImageSource {
         self.size = size
         internalTexture = Texture(device:sharedMetalRenderingDevice.device, orientation:.portrait, width:Int(size.width), height:Int(size.height), timingStyle:.stillImage)
     }
-    /// 转发
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         target.newTextureAvailable(internalTexture, fromSourceIndex:atIndex)
     }

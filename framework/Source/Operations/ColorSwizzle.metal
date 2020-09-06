@@ -2,7 +2,7 @@
 #include "OperationShaderTypes.h"
 
 using namespace metal;
-
+// rgba -> bgra
 fragment half4 colorSwizzleFragment(SingleInputVertexIO fragmentInput [[stage_in]],
                                    texture2d<half> inputTexture [[texture(0)]])
 {

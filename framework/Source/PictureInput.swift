@@ -85,7 +85,7 @@ public class PictureInput: ImageSource {
             }
         }
     }
-    /// 转发，这个什么时候会用到？似乎没用哈，又不是中间层
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         if hasProcessedImage {
             target.newTextureAvailable(self.internalTexture!, fromSourceIndex:atIndex)

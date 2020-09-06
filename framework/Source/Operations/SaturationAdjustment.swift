@@ -1,3 +1,4 @@
+//饱和度调整
 public class SaturationAdjustment: BasicOperation {
     public var saturation:Float = 1.0 { didSet { uniformSettings["saturation"] = saturation } }
     

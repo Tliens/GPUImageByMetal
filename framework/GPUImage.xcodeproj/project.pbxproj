@@ -851,16 +851,9 @@
 		BCE0BE9720D6E39E0006E120 /* Operations */ = {
 			isa = PBXGroup;
 			children = (
-				79E30E6520F10F72005FA13C /* BasicOperation.swift */,
-				BC7BA27A20F2C5E8006B5F4B /* OperationShaderTypes.h */,
-				79CB6E44210A55CB0042F87B /* BlendShaderTypes.h */,
-				79CB6E40210A53C90042F87B /* BlendShaderTypes.metal */,
-				79E30E6820F10F9C005FA13C /* Passthrough.metal */,
-				BC101EB32245650F0020D74D /* ColorSwizzle.metal */,
-				BCC6AB5E210E5E7900F9803A /* TextureSamplingOperation.swift */,
-				BCC6AB64210E5FF600F9803A /* TexelSamplingTypes.h */,
-				BCC6AB61210E5ECE00F9803A /* NearbyTexelSampling.metal */,
-				BC7FC40B212B2B3800B37FB6 /* OperationGroup.swift */,
+				E486F61F24F224CD00136BD7 /* Operation */,
+				E486F61D24F2057500136BD7 /* Type */,
+				E486F61E24F205A000136BD7 /* Metal */,
 				BC7BA27520F2C20D006B5F4B /* Color processing */,
 				BCFCD46320FCE77100560BC9 /* Blends */,
 				4C280F6E21342447001A985C /* Effects */,
@@ -922,6 +915,37 @@
 				79CB6E3D210A106B0042F87B /* SubtractBlend.metal */,
 			);
 			name = Blends;
+			sourceTree = "<group>";
+		};
+		E486F61D24F2057500136BD7 /* Type */ = {
+			isa = PBXGroup;
+			children = (
+				BC7BA27A20F2C5E8006B5F4B /* OperationShaderTypes.h */,
+				79CB6E44210A55CB0042F87B /* BlendShaderTypes.h */,
+				BCC6AB64210E5FF600F9803A /* TexelSamplingTypes.h */,
+			);
+			name = Type;
+			sourceTree = "<group>";
+		};
+		E486F61E24F205A000136BD7 /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				79CB6E40210A53C90042F87B /* BlendShaderTypes.metal */,
+				79E30E6820F10F9C005FA13C /* Passthrough.metal */,
+				BC101EB32245650F0020D74D /* ColorSwizzle.metal */,
+				BCC6AB61210E5ECE00F9803A /* NearbyTexelSampling.metal */,
+			);
+			name = Metal;
+			sourceTree = "<group>";
+		};
+		E486F61F24F224CD00136BD7 /* Operation */ = {
+			isa = PBXGroup;
+			children = (
+				79E30E6520F10F72005FA13C /* BasicOperation.swift */,
+				BCC6AB5E210E5E7900F9803A /* TextureSamplingOperation.swift */,
+				BC7FC40B212B2B3800B37FB6 /* OperationGroup.swift */,
+			);
+			name = Operation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

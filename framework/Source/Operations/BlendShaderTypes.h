@@ -1,8 +1,9 @@
 #ifndef BLENDSHADERTYPES_H
 #define BLENDSHADERTYPES_H
 
+/// 亮度
 half lum(half3 c);
-
+ 
 half3 clipcolor(half3 c);
 
 half3 setlum(half3 c, half l);

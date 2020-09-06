@@ -1,6 +1,6 @@
 import Foundation
 import Metal
-
+/// 顶点输入VertexFunctionName
 public func defaultVertexFunctionNameForInputs(_ inputCount:UInt) -> String {
     switch inputCount {
     case 1:
@@ -11,15 +11,19 @@ public func defaultVertexFunctionNameForInputs(_ inputCount:UInt) -> String {
         return "oneInputVertex"
     }
 }
-
+/// 基础操作，中间层父类
 open class BasicOperation: ImageProcessingOperation {
-    
+    /// 最大输入数量
     public let maximumInputs: UInt
+    /// 目标容器
     public let targets = TargetContainer()
+    /// 输入容器
     public let sources = SourceContainer()
-    
+    /// 激活下一帧的透传
     public var activatePassthroughOnNextFrame: Bool = false
+    /// uniform管理器
     public var uniformSettings:ShaderUniformSettings
+    /// 是否使用 metalshader
     public var useMetalPerformanceShaders: Bool = false {
         didSet {
             if !sharedMetalRenderingDevice.metalPerformanceShadersAreSupported {
@@ -28,12 +32,17 @@ open class BasicOperation: ImageProcessingOperation {
             }
         }
     }
-
+    /// 渲染管线
     let renderPipelineState: MTLRenderPipelineState
+    /// 操作名称
     let operationName: String
+    /// 输入的纹理们 key：第几个源传递过来，value：Texture
     var inputTextures = [UInt:Texture]()
+    /// 信号量控制
     let textureInputSemaphore = DispatchSemaphore(value:1)
+    /// 是否使用归一化纹理坐标
     var useNormalizedTextureCoordinates = true
+    /// 命令编码 输入的inputTextures 输出的Texture
     var metalPerformanceShaderPathway: ((MTLCommandBuffer, [UInt:Texture], Texture) -> ())?
 
     public init(vertexFunctionName: String? = nil, fragmentFunctionName: String, numberOfInputs: UInt = 1, operationName: String = #file) {
@@ -45,19 +54,20 @@ open class BasicOperation: ImageProcessingOperation {
         self.renderPipelineState = pipelineState
         self.uniformSettings = ShaderUniformSettings(uniformLookupTable:lookupTable)
     }
-    
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target: ImageConsumer, atIndex: UInt) {
         // TODO: Finish implementation later
     }
-    
+    /// 传来了新的纹理
     public func newTextureAvailable(_ texture: Texture, fromSourceIndex: UInt) {
         let _ = textureInputSemaphore.wait(timeout:DispatchTime.distantFuture)
         defer {
             textureInputSemaphore.signal()
         }
-        
+        // 记录
         inputTextures[fromSourceIndex] = texture
         
+        /// 如果输入的纹理数量大于maximumInputs 或者 激活 PassthroughOnNextFrame
         if (UInt(inputTextures.count) >= maximumInputs) || activatePassthroughOnNextFrame {
             let outputWidth:Int
             let outputHeight:Int
@@ -83,9 +93,10 @@ open class BasicOperation: ImageProcessingOperation {
             guard (!activatePassthroughOnNextFrame) else { // Use this to allow a bootstrap of cyclical processing, like with a low pass filter
                 activatePassthroughOnNextFrame = false
                 // TODO: Render rotated passthrough image here
-                
+                /// 移出 videoFrame 类型的纹理
                 removeTransientInputs()
                 textureInputSemaphore.signal()
+                // 分发纹理
                 updateTargetsWithTexture(outputTexture)
                 let _ = textureInputSemaphore.wait(timeout:DispatchTime.distantFuture)
 
@@ -116,7 +127,7 @@ open class BasicOperation: ImageProcessingOperation {
             let _ = textureInputSemaphore.wait(timeout:DispatchTime.distantFuture)
         }
     }
-    
+    /// 移出视音频帧
     func removeTransientInputs() {
         for index in 0..<self.maximumInputs {
             if let texture = inputTextures[index], texture.timingStyle.isTransient() {
@@ -124,7 +135,7 @@ open class BasicOperation: ImageProcessingOperation {
             }
         }
     }
-    
+    /// 内部提交渲染指令
     func internalRenderFunction(commandBuffer: MTLCommandBuffer, outputTexture: Texture) {
         commandBuffer.renderQuad(pipelineState: renderPipelineState, uniformSettings: uniformSettings, inputTextures: inputTextures, useNormalizedTextureCoordinates: useNormalizedTextureCoordinates, outputTexture: outputTexture)
     }

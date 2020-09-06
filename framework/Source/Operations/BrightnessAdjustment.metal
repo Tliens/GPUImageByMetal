@@ -8,6 +8,7 @@ typedef struct
     float brightness;
 } BrightnessUniform;
 
+//亮度调整滤镜 brightness是会发生变化的
 fragment half4 brightnessFragment(SingleInputVertexIO fragmentInput [[stage_in]],
                                   texture2d<half> inputTexture [[texture(0)]],
                                   constant BrightnessUniform& uniform [[ buffer(1) ]])

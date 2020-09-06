@@ -234,7 +234,7 @@ public class MovieInput: ImageSource {
             print("Current frame time : \(1000.0 * currentFrameTime) ms")
         }
     }
-
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         // Not needed for movie inputs
     }

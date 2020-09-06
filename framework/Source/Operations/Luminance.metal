@@ -12,6 +12,8 @@ fragment half4 luminanceFragment(SingleInputVertexIO fragmentInput [[stage_in]],
 {
     constexpr sampler quadSampler;
     half4 color = inputTexture.sample(quadSampler, fragmentInput.textureCoordinate);
+    //dot 两个数组点积、点乘 [1,2,3]·[4,5,6] = 1*1 + 2*3 + 3*6 = 1+6+18 = 25
+    //luminanceWeighting为亮度常量
     half luminance = dot(color.rgb, luminanceWeighting);
     
     return half4(half3(luminance), color.a);

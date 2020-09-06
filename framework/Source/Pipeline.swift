@@ -7,7 +7,7 @@ import Foundation
 public protocol ImageSource {
     /// 输入容器，输入源中有个输入容器，下文有介绍
     var targets:TargetContainer { get }
-    /// 传输之前的图像，有新纹理的时候把纹理给别人，即：目标，atIndex表示指定
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt)
 }
 /// 理解为可输出协议，名字不好，用ImageOutputable 可能更明确
@@ -197,7 +197,7 @@ public class ImageRelay: ImageProcessingOperation {
     
     public init() {
     }
-    /// 还记得这个吗？传输之前的图像，这里之前的指的是前一个中间层或者输入
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         /// 为何是0呢？这明显有优化控件 ，作者的 atIndex 还没用
         /// 从0开始，是因为这是个链，可以保证所有链上的都走一遍

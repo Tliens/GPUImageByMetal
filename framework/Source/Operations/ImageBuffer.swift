@@ -19,7 +19,7 @@ public class ImageBuffer: ImageProcessingOperation {
             updateTargetsWithTexture(texture)
         }
     }
-    
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         // Buffers most likely won't need this
     }

@@ -1,3 +1,4 @@
+/// 对比度滤镜
 public class ContrastAdjustment: BasicOperation {
     public var contrast:Float = 1.0 { didSet { uniformSettings["contrast"] = contrast } }
     

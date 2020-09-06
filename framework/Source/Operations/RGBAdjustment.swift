@@ -1,3 +1,4 @@
+///rgb 分别调整
 public class RGBAdjustment: BasicOperation {
     public var red:Float = 1.0 { didSet { uniformSettings["redAdjustment"] = red } }
     public var blue:Float = 1.0 { didSet { uniformSettings["blueAdjustment"] = blue } }

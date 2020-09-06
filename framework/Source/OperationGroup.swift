@@ -1,3 +1,4 @@
+//操作组
 open class OperationGroup: ImageProcessingOperation {
     let inputImageRelay = ImageRelay()
     let outputImageRelay = ImageRelay()
@@ -16,7 +17,7 @@ open class OperationGroup: ImageProcessingOperation {
     public func configureGroup(_ configurationOperation:(_ input:ImageRelay, _ output:ImageRelay) -> ()) {
         configurationOperation(inputImageRelay, outputImageRelay)
     }
-    
+    /// 把当前存在的纹理传给目标，atIndex表示指定，如：有新的target时
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
         outputImageRelay.transmitPreviousImage(to:target, atIndex:atIndex)
     }
